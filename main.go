@@ -1,21 +1,71 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func main() {
-	print(gpu_name() + "\n")
-	print(cpu_name() + "\n")
-	print(storage_name() + "\n")
-	print(ram_name() + "\n")
-	print(os_name() + "\n")
-	print(desktopEnv_name())
-	print(theme_name())
-	print(get_shell())
+	layout()
+}
+
+func layout() {
+	boxHeight, boxWidth := 30, 80
+	var mySwagBorder = lipgloss.Border{
+		Top:         "━",
+		Bottom:      "━",
+		Left:        "┃",
+		Right:       "┃",
+		TopLeft:     "┏",
+		TopRight:    "┓",
+		BottomLeft:  "┗",
+		BottomRight: "┛",
+	}
+
+	var outerBox = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(boxHeight).
+		Width(boxWidth)
+	var rightBox = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(15).
+		Width(20).Padding(0)
+	var centerBox = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(15).
+		Width(40)
+	var leftBox = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(15).
+		Width(20)
+	var bottomLeft = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(1).
+		Width(1)
+	var bottomRight = lipgloss.NewStyle().
+		BorderStyle(mySwagBorder).
+		BorderForeground(lipgloss.Color("7")).
+		Height(1).
+		Width(1)
+
+	fmt.Println(outerBox.Render(
+		lipgloss.JoinHorizontal(lipgloss.Center,
+			rightBox.Render(),
+			centerBox.Render(),
+			leftBox.Render()),
+		bottomLeft.Render(),
+		bottomRight.Render(),
+	))
 }
 
 func cpu_name() string {
@@ -148,11 +198,33 @@ func theme_name() string {
 	return gtkTheme
 }
 
-func get_shell() string {
+func shell_name() string {
+	var shellName string
 	output := os.Getenv("SHELL")
 	if strings.Contains(output, "/") {
-		slashCnt := strings.Count(output, "/")
-		print(slashCnt)
+		slashCnt := strings.Count(output, "/") + 1
+		fmtOutput := strings.SplitAfterN(output, "/", slashCnt)
+
+		shellName += fmtOutput[len(fmtOutput)-1] + "\n"
 	}
-	return output
+	return shellName
+}
+
+func terminal_name() string {
+	output := os.Getenv("TERM_PROGRAM")
+
+	return output + "\n"
+}
+
+func host_name() string {
+	username, hostcmd := os.Getenv("USER"), exec.Command("hostname")
+	host, err := hostcmd.Output()
+	if err != nil {
+		print("Unable to find host name")
+	}
+	hostname := "@" + string(host)
+
+	id := username + hostname
+
+	return id
 }
