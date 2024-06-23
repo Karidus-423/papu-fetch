@@ -35,37 +35,41 @@ func layout() {
 	var rightBox = lipgloss.NewStyle().
 		BorderStyle(mySwagBorder).
 		BorderForeground(lipgloss.Color("7")).
-		Height(15).
-		Width(20).Padding(0)
+		Height(14).
+		Width(19)
 	var centerBox = lipgloss.NewStyle().
 		BorderStyle(mySwagBorder).
 		BorderForeground(lipgloss.Color("7")).
-		Height(15).
-		Width(40)
+		Height(14).
+		Width(39)
 	var leftBox = lipgloss.NewStyle().
 		BorderStyle(mySwagBorder).
 		BorderForeground(lipgloss.Color("7")).
-		Height(15).
-		Width(20)
+		Height(14).
+		Width(19)
 	var bottomLeft = lipgloss.NewStyle().
 		BorderStyle(mySwagBorder).
 		BorderForeground(lipgloss.Color("7")).
-		Height(1).
-		Width(1)
+		Height(7).
+		Width(39)
 	var bottomRight = lipgloss.NewStyle().
 		BorderStyle(mySwagBorder).
 		BorderForeground(lipgloss.Color("7")).
-		Height(1).
-		Width(1)
+		Height(7).
+		Width(39)
 
-	fmt.Println(outerBox.Render(
-		lipgloss.JoinHorizontal(lipgloss.Center,
-			rightBox.Render(),
-			centerBox.Render(),
-			leftBox.Render()),
-		bottomLeft.Render(),
-		bottomRight.Render(),
-	))
+	fmt.Println(
+		outerBox.Render(lipgloss.JoinVertical(lipgloss.Center,
+			lipgloss.JoinHorizontal(lipgloss.Center,
+				rightBox.Render(),
+				centerBox.Render(),
+				leftBox.Render()),
+
+			lipgloss.JoinHorizontal(lipgloss.Center,
+				bottomLeft.Render(),
+				bottomRight.Render()),
+		)),
+	)
 }
 
 func cpu_name() string {
